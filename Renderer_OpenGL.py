@@ -1,5 +1,6 @@
 from pickle import TRUE
 import pygame
+import pygame_menu as pm
 from pygame.locals import *
 
 from shaders import *
@@ -10,19 +11,35 @@ from math import cos, sin, radians
 
 width = 1080
 height = 720
-
 deltaTime = 0.0
+ctrlR = 2
+ctrlL = 2
 
-ctrl = 2
-
+# ------------------------INITS--------------------------------------
 pygame.init()
+pygame.mixer.init()
+# --------------------------------------------------------------
 
 screen = pygame.display.set_mode(
     (width, height), pygame.OPENGL | pygame.DOUBLEBUF)
 clock = pygame.time.Clock()
 
+# --------------------------------------------------------------
+# Loading assets
 icon = pygame.image.load("Logo_Cristian_Color.png")
 bg = pygame.image.load("bg.png").convert()
+pygame.mixer.music.load("kokiri.mp3")
+
+mod = Model("models/Teddy.obj", "models/Teddy.bmp")
+goat = Model("models/goat.obj", "models/goat.bmp")
+ship = Model("models/ship.obj", "models/ship.bmp")
+cat = Model("models/cat.obj", "models/cat.bmp")
+tractor = Model("models/tractor.obj", "models/tractor.bmp")
+# --------------------------------------------------------------
+
+# --------------------------------------------------------------
+pygame.mixer.music.set_volume(0.1)
+pygame.mixer.music.play()
 
 rend = Renderer(screen, 0.145, 0.588, 0.745)
 
@@ -30,19 +47,52 @@ rend.setShaders(vertex_shader, fragment_shader)
 
 rend.target.z = -5
 
-mod = Model("Teddy.obj", "Teddy.bmp")
+# --------------------------------------------------------------
+# Positioning MODEL 1
+goat.position.z -= 5
+goat.position.y -= 0.4
+goat.scale.x = 0.3
+goat.scale.y = 0.3
+goat.scale.z = 0.3
+goat.rotation.y = 20
 
-# Positioning MODEL
+# Positioning MODEL 2
 mod.position.z -= 5
-mod.position.y -= 1
+mod.position.y -= 0.4
 mod.scale.x = 2
 mod.scale.y = 2
 mod.scale.z = 2
 mod.rotation.y = 90
 
-rend.pointLight.x -= 10
+# Positioning MODEL 3
+ship.position.z -= 5
+ship.position.y -= 0.5
+ship.scale.x = 1
+ship.scale.y = 1
+ship.scale.z = 1
+ship.rotation.y = 30
 
-rend.scene.append(mod)
+# Positioning MODEL 4
+cat.position.z -= 5
+cat.position.y -= 0.8
+cat.scale.x = 1.8
+cat.scale.y = 1.8
+cat.scale.z = 1.8
+cat.rotation.y = 5
+
+# Positioning MODEL 5
+# --------------------------------------------------------------
+tractor.scale.x = 0.4
+tractor.scale.y = 0.4
+tractor.scale.z = 0.4
+tractor.position.z -= 5
+tractor.rotation.y = 20
+
+rend.scene.append(cat)
+
+# --------------------------------------------------------------
+rend.pointLight.x -= 10
+# --------------------------------------------------------------
 
 pygame.event.set_grab(True)
 pygame.mouse.set_visible(False)
@@ -82,19 +132,50 @@ while isRunning:
         elif event.type == pygame.MOUSEBUTTONDOWN:
             mouse = pygame.mouse.get_pressed()
             if mouse[0]:
-                if ctrl == 1:
+
+                pygame.mixer.Channel(1).play(
+                    pygame.mixer.Sound("popsound.mp3"))
+                if ctrlL == 1:
+                    rend.scene.pop()
+                    rend.scene.append(cat)
+                elif ctrlL == 2:
+                    rend.scene.pop()
+                    rend.scene.append(mod)
+                elif ctrlL == 3:
+                    rend.scene.pop()
+                    rend.scene.append(ship)
+                elif ctrlL == 4:
+                    rend.scene.pop()
+                    rend.scene.append(goat)
+                elif ctrlL == 5:
+                    rend.scene.pop()
+                    rend.scene.append(tractor)
+                ctrlL += 1
+                if ctrlL == 6:
+                    ctrlL = 1
+
+            if mouse[2]:
+
+                pygame.mixer.Channel(1).play(
+                    pygame.mixer.Sound("popsound.mp3"))
+                if ctrlR == 1:
                     rend.setShaders(vertex_shader, fragment_shader)
-                elif ctrl == 2:
+                elif ctrlR == 2:
                     rend.setShaders(vertex_shader, fragment_shader_toon)
-                elif ctrl == 3:
-                    rend.setShaders(vertex_shader, fragment_shader_pop)
-                elif ctrl == 4:
-                    rend.setShaders(vertex_shader_expand, fragment_shader_red)
-                elif ctrl == 5:
+                elif ctrlR == 3:
+                    rend.setShaders(vertex_shader, fragment_shader_termal)
+                elif ctrlR == 4:
+                    rend.setShaders(vertex_shader_expandloop,
+                                    fragment_shader_bluered)
+                elif ctrlR == 5:
                     rend.setShaders(vertex_shader, fragment_shader_toonpop)
-                ctrl += 1
-                if ctrl == 6:
-                    ctrl = 1
+                elif ctrlR == 6:
+                    rend.setShaders(vertex_shader, fragment_shader_rainbow)
+                elif ctrlR == 7:
+                    rend.setShaders(vertex_shader, fragment_shader_tooncrazy)
+                ctrlR += 1
+                if ctrlR == 8:
+                    ctrlR = 1
 
     # -------------MOVEMENT OF CAMERA-------------------------------
     cursorposition = pygame.mouse.get_rel()
@@ -136,11 +217,17 @@ while isRunning:
     elif keys[K_2]:
         rend.setShaders(vertex_shader, fragment_shader_toon)
     elif keys[K_3]:
-        rend.setShaders(vertex_shader, fragment_shader_pop)
+        rend.setShaders(vertex_shader, fragment_shader_termal)
     elif keys[K_4]:
-        rend.setShaders(vertex_shader_expand, fragment_shader_red)
+        rend.setShaders(vertex_shader_expand, fragment_shader_rainbow)
     elif keys[K_5]:
         rend.setShaders(vertex_shader, fragment_shader_toonpop)
+    elif keys[K_6]:
+        rend.setShaders(vertex_shader, fragment_shader_tooncrazy)
+
+    # --------------------------MUSIC-----------------------------------------------
+    if keys[K_p]:
+        pygame.mixer.music.play()
 
     deltaTime = clock.tick(60) / 1000
     rend.time += deltaTime
