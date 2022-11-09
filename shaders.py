@@ -250,6 +250,40 @@ void main()
 {
     float intensity = dot(norms, normalize(pointLight - pos));
     if (intensity < 0.14) {
+        fragColor = texture(tex, UVs) * vec4((1 + 1*sin(time * 5)),(1 - 1*sin(time * 10)),(1 + 1*sin(time * 15)),1.0);
+    } else if (intensity < 0.28){
+        fragColor = texture(tex, UVs) * vec4((1 - 1*sin(time * 6)),(1 + 1*sin(time * 11)),(1 - 1*sin(time * 16)),1.0);
+    } else if (intensity < 0.42){
+        fragColor = texture(tex, UVs) * vec4((1 + 1*sin(time * 7)),(1 - 1*sin(time * 12)),(1 + 1*sin(time * 17)),1.0);
+    } else if (intensity < 0.56){
+        fragColor = texture(tex, UVs) * vec4((1 - 1*sin(time * 8)),(1 + 1*sin(time * 13)),(1 - 1*sin(time * 18)),1.0);
+    } else if (intensity < 0.7){
+        fragColor = texture(tex, UVs) * vec4((1 + 1*sin(time * 9)),(1 - 1*sin(time * 14)),(1 + 1*sin(time * 19)),1.0);
+    } else if (intensity < 0.84){
+        fragColor = texture(tex, UVs) * vec4((1 - 1*sin(time * 10)),(1 + 1*sin(time * 15)),(1 - 1*sin(time * 20)),1.0);
+    } else {
+        fragColor = texture(tex, UVs) * vec4((1 + 1*sin(time * 11)),(1 - 1*sin(time * 16)),(1 + 1*sin(time * 21)),1.0);
+    }
+}
+'''
+
+fragment_shader_tooncrazy2 = '''
+#version 450 core
+
+out vec4 fragColor;
+
+in vec2 UVs;
+in vec3 norms;
+in vec3 pos;
+
+uniform vec3 pointLight;
+uniform float time;
+uniform sampler2D tex;
+
+void main()
+{
+    float intensity = dot(norms, normalize(pointLight - pos));
+    if (intensity < 0.14) {
         fragColor = vec4((1 + 1*sin(time * 5)),(1 - 1*sin(time * 10)),(1 + 1*sin(time * 15)),1.0);
     } else if (intensity < 0.28){
         fragColor = vec4((1 - 1*sin(time * 6)),(1 + 1*sin(time * 11)),(1 - 1*sin(time * 16)),1.0);

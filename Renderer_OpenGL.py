@@ -9,8 +9,8 @@ from gl import Renderer, Model
 
 from math import cos, sin, radians
 
-width = 1080
-height = 720
+width = 1920
+height = 1080
 deltaTime = 0.0
 ctrlR = 2
 ctrlL = 2
@@ -173,8 +173,10 @@ while isRunning:
                     rend.setShaders(vertex_shader, fragment_shader_rainbow)
                 elif ctrlR == 7:
                     rend.setShaders(vertex_shader, fragment_shader_tooncrazy)
+                elif ctrlR == 8:
+                    rend.setShaders(vertex_shader, fragment_shader_tooncrazy2)
                 ctrlR += 1
-                if ctrlR == 8:
+                if ctrlR == 9:
                     ctrlR = 1
 
     # -------------MOVEMENT OF CAMERA-------------------------------
